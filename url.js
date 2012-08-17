@@ -1,25 +1,39 @@
 
 var URL = (function() {
 
-  function parseSearch(s) {
+  var NAME = 0;
+  var VALUE = 1;
+
+  function collectURLParameters(input) {
     var result = [];
     var k = 0;
-    var parts = s.slice(1).split('&');
-    for (var i = 0; i < parts.length; i++) {
-      var part = parts[i];
-      var key = part.split('=', 1)[0];
-      if (key) {
-        var value = part.slice(key.length + 1);
-        result[k++] = [key, value];
+    // Remove leading '?' using slice(1).
+    var parameters = input.slice(1).split('&');
+    for (var i = 0; i < parameters.length; i++) {
+      var parameter = parameters[i];
+      if (!parameter)
+        continue;
+      var index, name, value = null;
+      if ((index = parameter.indexOf('=')) === -1) {
+        name = parameter;
+      } else {
+        name = parameter.slice(0, index);
+        value = parameter.slice(index + 1);
       }
+      result[k++] = [name, value];
     }
     return result;
   }
 
-  function serializeParsed(array) {
-    return array.map(function(pair) {
-      return pair[1] !== '' ? pair.join('=') : pair[0];
+  function serializeParameters(parameters) {
+    return parameters.map(function(parameter) {
+      return parameter[VALUE] !== null ? parameter.join('=') : parameter[NAME];
     }).join('&');
+  }
+
+  function validateName(name) {
+    if (name === '' || name === null)
+      throw new TypeError('Invalid name');
   }
 
   function URL(url, base) {
@@ -136,10 +150,10 @@ var URL = (function() {
         this.pathname = value;
     },
 
-    get parameterNames() {
+    getParameterNames: function() {
       var seen = Object.create(null);
-      return parseSearch(this.search).map(function(pair) {
-        return pair[0];
+      return collectURLParameters(this.search).map(function(parameter) {
+        return parameter[NAME];
       }).filter(function(key) {
         if (key in seen)
           return false;
@@ -148,37 +162,68 @@ var URL = (function() {
       });
     },
 
-    getParameter: function(name) {
-      return this.getParameterAll(name).pop();
-    },
-
-    getParameterAll: function(name) {
+    getParameterValues: function(name) {
+      validateName(name);
       name = String(name);
       var result = [];
       var k = 0;
-      parseSearch(this.search).forEach(function(pair) {
-        if (pair[0] === name)
-          result[k++] = pair[1];
+      collectURLParameters(this.search).forEach(function(parameter) {
+        if (parameter[NAME] === name)
+          result[k++] = parameter[VALUE];
       });
       return result;
     },
 
-    appendParameter: function(name, values) {
-      if (!Array.isArray(values))
-        values = [values];
-      var parsed = parseSearch(this.search);
-      for (var i = 0; i < values.length; i++) {
-        parsed.push([name, values[i]]);
-      }
-      this.search = serializeParsed(parsed);
+    hasParameter: function(name) {
+      validateName(name);
+      name = String(name);
+      return collectURLParameters(this.search).some(function(parameter) {
+        return parameter[NAME] === name;
+      });
     },
 
-    clearParameter: function(name) {
-      this.search = serializeParsed(
-          parseSearch(this.search).filter(function(pair) {
-            return pair[0] !== name;
-          }));
+    getParameter: function(name) {
+      var values = this.getParameterValues(name);
+      return values.length ? values[0] : null;
     },
+
+    setParameter: function(name, value) {
+      validateName(name);
+      if (value !== null)
+        value = String(value);
+      name = String(name);
+      var parameters = collectURLParameters(this.search).filter(
+          function(parameter) {;
+            return parameter[NAME] !== name;
+          });
+
+      parameters[parameters.length] = [name, value];
+      this.search = serializeParameters(parameters);
+    },
+
+    addParameter: function(name, value) {
+      validateName(name);
+      if (value !== null)
+        value = String(value);
+      name = String(name);
+      var parameters = collectURLParameters(this.search)
+
+      parameters[parameters.length] = [name, value];
+      this.search = serializeParameters(parameters);
+    },
+
+    removeParameter: function(name) {
+      validateName(name);
+      var parameters = collectURLParameters(this.search).filter(
+          function(parameter) {;
+            return parameter[NAME] !== name;
+          });
+      this.search = serializeParameters(parameters);
+    },
+
+    clearParameters: function() {
+      this.search = '';
+    }
   };
 
   var oldURL = window.URL || window.webkitURL || window.mozURL;
@@ -191,14 +236,7 @@ var URL = (function() {
     return oldURL.revokeObjectURL.apply(oldURL, arguments);
   };
 
-  // Methods should not be enumerable.
   Object.defineProperty(URL.prototype, 'toString', {enumerable: false});
-  Object.defineProperty(URL.prototype, 'getParameter', {enumerable: false});
-  Object.defineProperty(URL.prototype, 'getParameterAll', {enumerable: false});
-  Object.defineProperty(URL.prototype, 'appendParameter', {enumerable: false});
-  Object.defineProperty(URL.prototype, 'clearParameter', {enumerable: false});
-  Object.defineProperty(URL, 'createObjectURL', {enumerable: false});
-  Object.defineProperty(URL, 'revokeObjectURL', {enumerable: false});
 
   return URL;
 })();
