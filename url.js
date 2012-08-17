@@ -20,20 +20,27 @@ var URL = (function() {
         name = parameter.slice(0, index);
         value = parameter.slice(index + 1);
       }
-      result[k++] = [name, value];
+      result[k++] = [
+        decodeURIComponent(name),
+        value && decodeURIComponent(value)
+      ];
     }
     return result;
   }
 
-  function serializeParameters(parameters) {
-    return parameters.map(function(parameter) {
-      return parameter[VALUE] !== null ? parameter.join('=') : parameter[NAME];
-    }).join('&');
+  function canonicalizeQueryParameter(s) {
+    // encodeURIComponent is more aggressive than the spec. We only need to
+    // escape %, & and =.
+    return s.replace(/%|&|=/g, encodeURIComponent);
   }
 
-  function validateName(name) {
-    if (name === '' || name === null)
-      throw new TypeError('Invalid name');
+  function serializeParameters(parameters) {
+    return parameters.map(function(parameter) {
+      return canonicalizeQueryParameter(parameter[NAME]) +
+          (parameter[VALUE] !== null ?
+               '=' + canonicalizeQueryParameter(parameter[VALUE]) :
+               '');
+    }).join('&');
   }
 
   function URL(url, base) {
@@ -163,7 +170,6 @@ var URL = (function() {
     },
 
     getParameterValues: function(name) {
-      validateName(name);
       name = String(name);
       var result = [];
       var k = 0;
@@ -175,7 +181,6 @@ var URL = (function() {
     },
 
     hasParameter: function(name) {
-      validateName(name);
       name = String(name);
       return collectURLParameters(this.search).some(function(parameter) {
         return parameter[NAME] === name;
@@ -188,7 +193,8 @@ var URL = (function() {
     },
 
     setParameter: function(name, value) {
-      validateName(name);
+      if (name === '' && value === null)
+        throw new TypeError('Invalid input');
       if (value !== null)
         value = String(value);
       name = String(name);
@@ -202,7 +208,8 @@ var URL = (function() {
     },
 
     addParameter: function(name, value) {
-      validateName(name);
+      if (name === '' && value === null)
+        throw new TypeError('Invalid input');
       if (value !== null)
         value = String(value);
       name = String(name);
@@ -213,7 +220,6 @@ var URL = (function() {
     },
 
     removeParameter: function(name) {
-      validateName(name);
       var parameters = collectURLParameters(this.search).filter(
           function(parameter) {;
             return parameter[NAME] !== name;
