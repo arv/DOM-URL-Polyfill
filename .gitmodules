@@ -1,3 +1,6 @@
-[submodule "third-party/qunit"]
-	path = third-party/qunit
-	url = git://github.com/jquery/qunit.git
+[submodule "third_party/mocha"]
+	path = third_party/mocha
+	url = https://github.com/visionmedia/mocha.git
+[submodule "third_party/expect.js"]
+	path = third_party/expect.js
+	url = https://github.com/LearnBoost/expect.js.git
