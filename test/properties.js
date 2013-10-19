@@ -3,17 +3,17 @@ suite('Properties', function() {
 
   test('protocol', function() {
     var url = new URL('mailto:abc@def.com');
-    expect(url.protocol).to.be('mailto:');
+    assert.equal(url.protocol, 'mailto:');
 
     url = new URL('http://www.example.com/');
-    expect(url.protocol).to.be('http:');
+    assert.equal(url.protocol, 'http:');
 
     url.protocol = 'https';
-    expect(url.protocol).to.be('https:');
+    assert.equal(url.protocol, 'https:');
 
     url.protocol = 'foo:';
-    expect(url.protocol).to.be('foo:');
-    expect(url.href).to.be('foo://www.example.com/');
+    assert.equal(url.protocol, 'foo:');
+    assert.equal(url.href, 'foo://www.example.com/');
   });
 
   test('username', function() {
@@ -26,133 +26,133 @@ suite('Properties', function() {
 
   test('host', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.host).to.be('www.example.com');
+    assert.equal(url.host, 'www.example.com');
 
     url = new URL('http://www.example.com:8080/');
-    expect(url.host).to.be('www.example.com:8080');
+    assert.equal(url.host, 'www.example.com:8080');
 
     url.host = 'changed';
-    expect(url.host).to.be('changed');
-    expect(url.href).to.be('http://changed/');
+    assert.equal(url.host, 'changed:8080');
+    assert.equal(url.href, 'http://changed:8080/');
 
     url.host = 'again:99';
-    expect(url.host).to.be('again:99');
-    expect(url.href).to.be('http://again:99/');
+    assert.equal(url.host, 'again:99');
+    assert.equal(url.href, 'http://again:99/');
   });
 
   test('hostname', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.hostname).to.be('www.example.com');
+    assert.equal(url.hostname, 'www.example.com');
 
     url = new URL('http://www.example.com:8080/');
-    expect(url.hostname).to.be('www.example.com');
+    assert.equal(url.hostname, 'www.example.com');
 
     url.hostname = 'changed';
-    expect(url.hostname).to.be('changed');
-    expect(url.host).to.be('changed:8080');
-    expect(url.href).to.be('http://changed:8080/');
+    assert.equal(url.hostname, 'changed');
+    assert.equal(url.host, 'changed:8080');
+    assert.equal(url.href, 'http://changed:8080/');
   });
 
   test('port', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.port).to.be('');
+    assert.equal(url.port, '');
 
     url = new URL('http://www.example.com:8080/');
-    expect(url.port).to.be('8080');
+    assert.equal(url.port, '8080');
 
     url.port = '99';
-    expect(url.port).to.be('99');
-    expect(url.href).to.be('http://www.example.com:99/');
+    assert.equal(url.port, '99');
+    assert.equal(url.href, 'http://www.example.com:99/');
   });
 
   test('pathname', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.pathname).to.be('/');
+    assert.equal(url.pathname, '/');
 
     url = new URL('http://www.example.com');
-    expect(url.pathname).to.be('/');
+    assert.equal(url.pathname, '/');
 
     url = new URL('http://www.example.com/a/b');
-    expect(url.pathname).to.be('/a/b');
+    assert.equal(url.pathname, '/a/b');
 
     url = new URL('http://www.example.com/a/b/');
-    expect(url.pathname).to.be('/a/b/');
+    assert.equal(url.pathname, '/a/b/');
 
     url.pathname = '';
-    expect(url.pathname).to.be('/');
+    assert.equal(url.pathname, '/');
 
     url.pathname = 'a/b/c'
-    expect(url.pathname).to.be('/a/b/c');
+    assert.equal(url.pathname, '/a/b/c');
   });
 
   test('search', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.search).to.be('');
+    assert.equal(url.search, '');
 
     url = new URL('http://www.example.com/?');
-    expect(url.search).to.be('');
+    assert.equal(url.search, '');
 
     url = new URL('http://www.example.com/?a');
-    expect(url.search).to.be('?a');
+    assert.equal(url.search, '?a');
 
     url.search = 'b';
-    expect(url.search).to.be('?b');
+    assert.equal(url.search, '?b');
 
     url.search = '?b';
-    expect(url.search).to.be('?b');
+    assert.equal(url.search, '?b');
 
     url.search = '';
-    expect(url.search).to.be('');
+    assert.equal(url.search, '');
 
     url.search = '?';
-    expect(url.search).to.be('');
+    assert.equal(url.search, '');
   });
 
   test('hash', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.hash).to.be('');
+    assert.equal(url.hash, '');
 
     url = new URL('http://www.example.com/#');
-    expect(url.hash).to.be('');
+    assert.equal(url.hash, '');
 
     url = new URL('http://www.example.com/#a');
-    expect(url.hash).to.be('#a');
+    assert.equal(url.hash, '#a');
 
     url.hash = 'b';
-    expect(url.hash).to.be('#b');
+    assert.equal(url.hash, '#b');
 
     url.hash = '#b';
-    expect(url.hash).to.be('#b');
+    assert.equal(url.hash, '#b');
 
     url.hash = '';
-    expect(url.hash).to.be('');
+    assert.equal(url.hash, '');
 
     url.hash = '#';
-    expect(url.hash).to.be('');
+    assert.equal(url.hash, '');
   });
 
   test('filename', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.filename).to.be('');
+    assert.equal(url.filename, '');
 
     url = new URL('http://www.example.com/a');
-    expect(url.filename).to.be('a');
+    assert.equal(url.filename, 'a');
 
     url = new URL('http://www.example.com/a/b');
-    expect(url.filename).to.be('b');
+    assert.equal(url.filename, 'b');
 
     url = new URL('http://www.example.com/a/#b');
-    expect(url.filename).to.be('');
+    assert.equal(url.filename, '');
 
     url = new URL('http://www.example.com/a/b#c');
-    expect(url.filename).to.be('b');
+    assert.equal(url.filename, 'b');
 
     url = new URL('http://www.example.com/a/b?c');
-    expect(url.filename).to.be('b');
+    assert.equal(url.filename, 'b');
 
     url.filename = 'B';
-    expect(url.filename).to.be('B');
-    expect(url.href).to.be('http://www.example.com/a/B?c');
+    assert.equal(url.filename, 'B');
+    assert.equal(url.href, 'http://www.example.com/a/B?c');
   });
 
   test('origin', function() {
@@ -161,11 +161,11 @@ suite('Properties', function() {
 
   test('href', function() {
     var url = new URL('http://www.example.com/');
-    expect(url.href).to.be('http://www.example.com/');
-    expect(url.href).to.be(url.toString());
+    assert.equal(url.href, 'http://www.example.com/');
+    assert.equal(url.href, url.toString());
 
     url.href = 'https://changed/';
-    expect(url.href).to.be('https://changed/');
+    assert.equal(url.href, 'https://changed/');
   });
 
 });

@@ -1,0 +1,27 @@
+{
+  "name": "DOM-URL-Polyfill",
+  "version": "0.0.1",
+  "description": "Polyfill for url.spec.whatwg.org",
+  "keywords": [
+    "javascript",
+    "ecmascript",
+    "URL",
+    "polyfill"
+  ],
+  "author": "Erik Arvidsson",
+  "license": "Apache License 2.0",
+  "main": "./src/url.js",
+  "bin": {
+    "traceur": "./traceur"
+  },
+  "homepage": "https://github.com/arv/DOM-URL-Polyfill",
+  "bugs": "https://github.com/arv/DOM-URL-Polyfill/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arv/DOM-URL-Polyfill"
+  },
+  "devDependencies": {
+    "mocha": ">=1.9",
+    "chai": ">=1.5"
+  }
+}
