@@ -1,6 +1,15 @@
 
 suite('Properties', function() {
 
+  test('constructor', function() {
+    assert.throws(function() {
+      new URL;
+    }, TypeError);
+    assert.throws(function() {
+      new URL('relative');
+    }, TypeError);
+  });
+
   test('protocol', function() {
     var url = new URL('mailto:abc@def.com');
     assert.equal(url.protocol, 'mailto:');
@@ -129,30 +138,6 @@ suite('Properties', function() {
 
     url.hash = '#';
     assert.equal(url.hash, '');
-  });
-
-  test('filename', function() {
-    var url = new URL('http://www.example.com/');
-    assert.equal(url.filename, '');
-
-    url = new URL('http://www.example.com/a');
-    assert.equal(url.filename, 'a');
-
-    url = new URL('http://www.example.com/a/b');
-    assert.equal(url.filename, 'b');
-
-    url = new URL('http://www.example.com/a/#b');
-    assert.equal(url.filename, '');
-
-    url = new URL('http://www.example.com/a/b#c');
-    assert.equal(url.filename, 'b');
-
-    url = new URL('http://www.example.com/a/b?c');
-    assert.equal(url.filename, 'b');
-
-    url.filename = 'B';
-    assert.equal(url.filename, 'B');
-    assert.equal(url.href, 'http://www.example.com/a/B?c');
   });
 
   test('origin', function() {
